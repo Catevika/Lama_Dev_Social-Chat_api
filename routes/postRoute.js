@@ -88,13 +88,19 @@ router.get('/:id', async (req, res) => {
 });
 
 // get all User's posts
-router.get('/profile/:username', async (req, res) => {
+router.get('/profile/:profileId', async (req, res) => {
 	try {
-		const currentUser = await UserModel.findOne(req.params);
-		const userPosts = await PostModel.find({
-			userId: currentUser._id
-		});
-		res.status(200).json(userPosts);
+		const user = await UserModel.findOne({ _id: req.params.profileId });
+		{
+			const posts = await PostModel.find({
+				userId: user._id
+			});
+			if (posts) {
+				res.status(200).json(posts);
+			} else {
+				return 'No posts available yet.';
+			}
+		}
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}
