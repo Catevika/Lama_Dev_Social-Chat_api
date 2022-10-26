@@ -6,6 +6,14 @@ const PostSchema = mongoose.Schema(
 			type: String,
 			required: true
 		},
+		postAuthor: {
+			type: String,
+			required: true
+		},
+		postAuthorPicture: {
+			type: String,
+			required: true
+		},
 		description: {
 			type: String,
 			max: 500
