@@ -3,6 +3,9 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import cors from 'cors';
 
 import userRoute from './routes/userRoute.js';
@@ -19,11 +22,33 @@ mongoose.connect(process.env.MONGO_URI, () =>
 
 app.use(express.json());
 app.use(helmet());
+app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
 app.use(morgan('common'));
 
 // To serve images to public
-app.use(express.static('public'));
-app.use('/images', express.static('images'));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+// app.use(express.static('public'));
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
+console.log(path.join(__dirname, 'public/images/'));
+
+const storage = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, 'public/images');
+	},
+	filename: (req, file, cb) => {
+		cb(null, req.body.name);
+	}
+});
+
+const upload = multer({ storage: storage });
+app.post('/api/upload', upload.single('file'), (req, res) => {
+	try {
+		return res.status(200).json('File uploaded successfully');
+	} catch (error) {
+		console.log(error);
+	}
+});
 
 app.use('/api/users', userRoute);
 app.use('/api/auth', authRoute);
