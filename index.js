@@ -11,6 +11,8 @@ import cors from 'cors';
 import userRoute from './routes/userRoute.js';
 import authRoute from './routes/authRoute.js';
 import postRoute from './routes/postRoute.js';
+import conversationRoute from './routes/conversationRoute.js';
+import messageRoute from './routes/messageRoute.js';
 
 dotenv.config();
 const app = express();
@@ -30,11 +32,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // app.use(express.static('public'));
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
-console.log(path.join(__dirname, 'public/images/'));
 
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
-		cb(null, 'public/images');
+		cb(null, 'public/images/Post');
 	},
 	filename: (req, file, cb) => {
 		cb(null, req.body.name);
@@ -53,6 +54,8 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
 app.use('/api/users', userRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/posts', postRoute);
+app.use('/api/conversations', conversationRoute);
+app.use('/api/messages', messageRoute);
 
 app.listen(process.env.EXPRESS_PORT, () =>
 	console.log('\x1b[33m', `Server running on port ${process.env.EXPRESS_PORT}`)
