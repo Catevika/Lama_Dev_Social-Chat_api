@@ -18,6 +18,8 @@ dotenv.config();
 const app = express();
 app.use(cors());
 
+mongoose.set('strictQuery', true);
+
 mongoose.connect(process.env.MONGO_URI, () =>
 	console.log('\x1b[33m', 'MongoDB connected successfully')
 );
